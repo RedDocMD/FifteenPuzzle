@@ -10,6 +10,7 @@ type Board struct {
 	tiles  [][]int
 	size   int
 	parent *Board
+	depth  int
 }
 
 // Defines possible actions on this state to generate the next
@@ -26,7 +27,7 @@ func NewBoard(tiles [][]int, size int) *Board {
 	if !checkTiles(tiles, size) {
 		return nil
 	}
-	f := Board{tiles, size, nil}
+	f := Board{tiles, size, nil, 0}
 	return &f
 }
 
@@ -47,10 +48,9 @@ func checkTiles(tiles [][]int, size int) bool {
 
 // NextBoard generates the next Board corresponding to the given action or nil of not possible
 func (board *Board) NextBoard(action int) *Board {
-	newBoard := new(Board)
-	newBoard.tiles = board.tiles
-	newBoard.size = board.size
+	newBoard := NewBoard(board.tiles, board.size)
 	newBoard.parent = board
+	newBoard.depth = board.depth + 1
 	i, j, _ := board.findZero()
 	switch action {
 	case ShiftLeft:
@@ -117,4 +117,10 @@ func (board Board) String() string {
 		str += "\n"
 	}
 	return str
+}
+
+//Actions returns the possible of the Game
+func actions() []int {
+	actions := []int{ShiftUp, ShiftDown, ShiftLeft, ShiftRight}
+	return actions
 }
