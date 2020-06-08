@@ -7,8 +7,9 @@ import (
 
 // Board represents the n puzzle board at any given time
 type Board struct {
-	tiles [][]int
-	size  int
+	tiles  [][]int
+	size   int
+	parent *Board
 }
 
 // Defines possible actions on this state to generate the next
@@ -25,7 +26,7 @@ func NewBoard(tiles [][]int, size int) *Board {
 	if !checkTiles(tiles, size) {
 		return nil
 	}
-	f := Board{tiles, size}
+	f := Board{tiles, size, nil}
 	return &f
 }
 
@@ -48,6 +49,7 @@ func checkTiles(tiles [][]int, size int) bool {
 func (board *Board) NextBoard(action int) *Board {
 	newBoard := new(Board)
 	newBoard.tiles = board.tiles
+	newBoard.parent = board
 	i, j, _ := board.findZero()
 	switch action {
 	case ShiftLeft:
