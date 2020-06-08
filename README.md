@@ -5,8 +5,7 @@ This is an application written in Go which attempts to solve the 15 puzzle with 
 The following algorithms will be used to find a solution (*not* necessarily optimal):
 
 1. Iterative-deepening DFS
-2. Bi-directional search
-3. Vanilla DFS (Just for kicks :smiley:)
+2. Vanilla DFS (Just for kicks :smiley:)
 
 The following algorithms will be used to find an optimal solution:
 
