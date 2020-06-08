@@ -65,8 +65,11 @@ func recursiveDLS(node *Board, limit int, closed *map[*Board]bool) (int, *Board)
 	if node.Solved() {
 		return SUCCESS, node
 	}
-	if limit == 0 || (*closed)[node] {
+	if (*closed)[node] {
 		return FAILURE, nil
+	}
+	if limit == 0 {
+		return CUTOFF, nil
 	}
 	cutoff := false
 	actions := actions()

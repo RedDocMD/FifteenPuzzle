@@ -48,7 +48,12 @@ func checkTiles(tiles [][]int, size int) bool {
 
 // NextBoard generates the next Board corresponding to the given action or nil of not possible
 func (board *Board) NextBoard(action int) *Board {
-	newBoard := NewBoard(board.tiles, board.size)
+	newTiles := make([][]int, board.size)
+	for i := range newTiles {
+		newTiles[i] = make([]int, board.size)
+		copy(newTiles[i], board.tiles[i])
+	}
+	newBoard := NewBoard(newTiles, board.size)
 	newBoard.parent = board
 	newBoard.depth = board.depth + 1
 	i, j, _ := board.findZero()
@@ -130,15 +135,16 @@ func (board *Board) PrintPath() {
 	if board == nil {
 		fmt.Println("Cannot print path from nil board")
 	} else {
-		boards := make([]*Board, board.depth+1)
-		for i := 0; board != nil; i++ {
-			boards[i] = board
-			board = board.parent
+		depth := board.depth
+		boards := make([]*Board, depth+1)
+		pt := board
+		for i := 0; pt != nil; i++ {
+			boards[i] = pt
+			pt = pt.parent
 		}
-		for i := board.depth; i >= 0; i-- {
-			fmt.Println(boards[i])
+		for i := depth; i >= 0; i-- {
+			fmt.Println(*(boards[i]))
 			fmt.Println()
 		}
 	}
-
 }

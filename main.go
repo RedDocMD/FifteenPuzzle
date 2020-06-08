@@ -26,9 +26,6 @@ func main() {
 	readIntoFile(tiles, size, filename)
 	board := puzzle.NewBoard(tiles, size)
 
-	fmt.Println("Start position")
-	fmt.Println(*board)
-
 	solved := puzzle.IterativeDeepeningSearch(board)
 	if solved != nil {
 		fmt.Println("Solved board")
