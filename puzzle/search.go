@@ -51,7 +51,7 @@ const (
 
 // IterativeDeepeningSearch performs iterative deepening DFS
 func IterativeDeepeningSearch(start *Board) *Board {
-	const maxLimit = 30
+	const maxLimit = 24
 	for limit := 1; limit <= maxLimit; limit++ {
 		result, goal := depthLimitedSearch(start, limit)
 		if result == SUCCESS {

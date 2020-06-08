@@ -7,10 +7,10 @@ import (
 
 // Board represents the n puzzle board at any given time
 type Board struct {
-	tiles  [][]int
-	size   int
+	tiles  [][]int8
+	size   int8
 	parent *Board
-	depth  int
+	depth  int8
 }
 
 // Defines possible actions on this state to generate the next
@@ -23,7 +23,7 @@ const (
 
 // NewBoard returns a Board pointer for the given tile config
 // Returns nil if tiles is an invalid board config
-func NewBoard(tiles [][]int, size int) *Board {
+func NewBoard(tiles [][]int8, size int8) *Board {
 	if !checkTiles(tiles, size) {
 		return nil
 	}
@@ -31,14 +31,15 @@ func NewBoard(tiles [][]int, size int) *Board {
 	return &f
 }
 
-func checkTiles(tiles [][]int, size int) bool {
-	cnt := make(map[int]int)
-	for i := 0; i < size; i++ {
-		for j := 0; j < size; j++ {
+func checkTiles(tiles [][]int8, size int8) bool {
+	cnt := make(map[int8]int8)
+	var i, j int8
+	for i = 0; i < size; i++ {
+		for j = 0; j < size; j++ {
 			cnt[tiles[i][j]]++
 		}
 	}
-	for i := 0; i < size*size; i++ {
+	for i = 0; i < size*size; i++ {
 		if cnt[i] != 1 {
 			return false
 		}
@@ -48,9 +49,9 @@ func checkTiles(tiles [][]int, size int) bool {
 
 // NextBoard generates the next Board corresponding to the given action or nil of not possible
 func (board *Board) NextBoard(action int) *Board {
-	newTiles := make([][]int, board.size)
+	newTiles := make([][]int8, board.size)
 	for i := range newTiles {
-		newTiles[i] = make([]int, board.size)
+		newTiles[i] = make([]int8, board.size)
 		copy(newTiles[i], board.tiles[i])
 	}
 	newBoard := NewBoard(newTiles, board.size)
@@ -90,21 +91,22 @@ func (board *Board) NextBoard(action int) *Board {
 	return newBoard
 }
 
-func (board *Board) findZero() (int, int, error) {
-	for i := 0; i < board.size; i++ {
-		for j := 0; j < board.size; j++ {
+func (board *Board) findZero() (int8, int8, error) {
+	var i, j int8
+	for i = 0; i < board.size; i++ {
+		for j = 0; j < board.size; j++ {
 			if board.tiles[i][j] == 0 {
 				return i, j, nil
 			}
 		}
 	}
-	return -1, -1, errors.New("Invalid board")
+	return int8(0), int8(0), errors.New("Invalid board")
 }
 
 // Solved checks if the board is in the position which is the solved state
 func (board *Board) Solved() bool {
 	size := board.size
-	for i := 0; i < size*size-1; i++ {
+	for i := int8(0); i < size*size-1; i++ {
 		if board.tiles[i/size][i%size] != i+1 {
 			return false
 		}
@@ -115,8 +117,9 @@ func (board *Board) Solved() bool {
 // String returns string representation of Board
 func (board Board) String() string {
 	var str string = ""
-	for i := 0; i < board.size; i++ {
-		for j := 0; j < board.size; j++ {
+	var i, j int8
+	for i = 0; i < board.size; i++ {
+		for j = 0; j < board.size; j++ {
 			if board.tiles[i][j] != 0 {
 				str += fmt.Sprintf("%3d", board.tiles[i][j])
 			} else {
