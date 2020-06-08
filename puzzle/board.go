@@ -117,7 +117,11 @@ func (board Board) String() string {
 	var str string = ""
 	for i := 0; i < board.size; i++ {
 		for j := 0; j < board.size; j++ {
-			str += fmt.Sprintf("%3d", board.tiles[i][j])
+			if board.tiles[i][j] != 0 {
+				str += fmt.Sprintf("%3d", board.tiles[i][j])
+			} else {
+				str += "   "
+			}
 		}
 		str += "\n"
 	}
