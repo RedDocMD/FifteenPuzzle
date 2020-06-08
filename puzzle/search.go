@@ -1,9 +1,5 @@
 package puzzle
 
-import (
-	"fmt"
-)
-
 // DepthFirstSearch performs vanilla DFS
 func DepthFirstSearch(start *Board) *Board {
 	var open []*Board
@@ -57,8 +53,7 @@ const (
 func IterativeDeepeningSearch(start *Board) *Board {
 	const maxLimit = 20
 	for limit := 1; limit <= maxLimit; limit++ {
-		fmt.Println("Started on limit", limit)
-		result, goal := depthLimitedSearch(start, limit)
+		result, goal := recursiveDLS(start, limit)
 		if result == SUCCESS {
 			return goal
 		}
@@ -66,24 +61,20 @@ func IterativeDeepeningSearch(start *Board) *Board {
 	return nil
 }
 
-func recursiveDLS(node *Board, limit int, closed *map[*Board]bool) (int, *Board) {
+func recursiveDLS(node *Board, limit int) (int, *Board) {
 	if node.Solved() {
 		return SUCCESS, node
-	}
-	if (*closed)[node] {
-		return FAILURE, nil
 	}
 	if limit == 0 {
 		return CUTOFF, nil
 	}
 	cutoff := false
 	actions := actions()
-	(*closed)[node] = true
 	for i := range actions {
 		action := actions[i]
 		next := node.NextBoard(action)
 		if next != nil {
-			result, goal := recursiveDLS(next, limit-1, closed)
+			result, goal := recursiveDLS(next, limit-1)
 			switch result {
 			case SUCCESS:
 				return result, goal
@@ -92,14 +83,8 @@ func recursiveDLS(node *Board, limit int, closed *map[*Board]bool) (int, *Board)
 			}
 		}
 	}
-	(*closed)[node] = false
 	if cutoff {
 		return CUTOFF, nil
 	}
 	return FAILURE, nil
-}
-
-func depthLimitedSearch(start *Board, limit int) (int, *Board) {
-	closed := make(map[*Board]bool)
-	return recursiveDLS(start, limit, &closed)
 }

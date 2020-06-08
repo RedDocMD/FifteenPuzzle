@@ -7,10 +7,10 @@ import (
 
 // Board represents the n puzzle board at any given time
 type Board struct {
-	tiles  [][]int8
-	size   int8
-	parent *Board
-	depth  int8
+	tiles       [][]int8
+	size        int8
+	transitions []int8
+	depth       int8
 }
 
 // Defines possible actions on this state to generate the next
@@ -27,7 +27,8 @@ func NewBoard(tiles [][]int8, size int8) *Board {
 	if !checkTiles(tiles, size) {
 		return nil
 	}
-	f := Board{tiles, size, nil, 0}
+	transitions := make([]int8, 0)
+	f := Board{tiles, size, transitions, 0}
 	return &f
 }
 
@@ -48,15 +49,18 @@ func checkTiles(tiles [][]int8, size int8) bool {
 }
 
 // NextBoard generates the next Board corresponding to the given action or nil of not possible
-func (board *Board) NextBoard(action int) *Board {
+func (board *Board) NextBoard(action int8) *Board {
 	newTiles := make([][]int8, board.size)
 	for i := range newTiles {
 		newTiles[i] = make([]int8, board.size)
 		copy(newTiles[i], board.tiles[i])
 	}
 	newBoard := NewBoard(newTiles, board.size)
-	newBoard.parent = board
+	newBoard.transitions = make([]int8, len(board.transitions))
+	copy(newBoard.transitions, board.transitions)
+	newBoard.transitions = append(newBoard.transitions, action)
 	newBoard.depth = board.depth + 1
+
 	i, j, _ := board.findZero()
 	switch action {
 	case ShiftLeft:
@@ -89,6 +93,20 @@ func (board *Board) NextBoard(action int) *Board {
 		}
 	}
 	return newBoard
+}
+
+func (board *Board) reversedActionBoard(action int8) *Board {
+	switch action {
+	case ShiftDown:
+		return board.NextBoard(ShiftUp)
+	case ShiftUp:
+		return board.NextBoard(ShiftDown)
+	case ShiftRight:
+		return board.NextBoard(ShiftLeft)
+	case ShiftLeft:
+		return board.NextBoard(ShiftRight)
+	}
+	return nil
 }
 
 func (board *Board) findZero() (int8, int8, error) {
@@ -132,8 +150,8 @@ func (board Board) String() string {
 }
 
 //Actions returns the possible of the Game
-func actions() []int {
-	actions := []int{ShiftUp, ShiftDown, ShiftLeft, ShiftRight}
+func actions() []int8 {
+	actions := []int8{ShiftUp, ShiftDown, ShiftLeft, ShiftRight}
 	return actions
 }
 
@@ -142,15 +160,20 @@ func (board *Board) PrintPath() {
 	if board == nil {
 		fmt.Println("Cannot print path from nil board")
 	} else {
-		depth := board.depth
-		boards := make([]*Board, depth+1)
+		fmt.Println("There are", board.depth, "steps")
+		boards := make([]*Board, 0)
 		pt := board
-		for i := 0; pt != nil; i++ {
-			boards[i] = pt
-			pt = pt.parent
+		boards = append(boards, pt)
+		for i := len(board.transitions) - 1; i >= 0; i-- {
+			pt = pt.reversedActionBoard(board.transitions[i])
+			if pt != nil {
+				boards = append(boards, pt)
+			} else {
+				break
+			}
 		}
-		for i := depth; i >= 0; i-- {
-			fmt.Println(*(boards[i]))
+		for i := len(boards) - 1; i >= 0; i-- {
+			fmt.Println(boards[i])
 			fmt.Println()
 		}
 	}
