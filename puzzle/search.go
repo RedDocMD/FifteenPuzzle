@@ -41,3 +41,57 @@ func DepthFirstSearch(start *Board) *Board {
 	}
 	return nil
 }
+
+// Depth limited DFS return flags
+const (
+	SUCCESS = iota
+	FAILURE = iota
+	CUTOFF  = iota
+)
+
+// IterativeDeepeningSearch performs iterative deepening DFS
+func IterativeDeepeningSearch(start *Board) *Board {
+	const maxLimit = 30
+	for limit := 1; limit <= maxLimit; limit++ {
+		result, goal := depthLimitedSearch(start, limit)
+		if result == SUCCESS {
+			return goal
+		}
+	}
+	return nil
+}
+
+func recursiveDLS(node *Board, limit int, closed *map[*Board]bool) (int, *Board) {
+	if node.Solved() {
+		return SUCCESS, node
+	}
+	if limit == 0 || (*closed)[node] {
+		return FAILURE, nil
+	}
+	cutoff := false
+	actions := actions()
+	(*closed)[node] = true
+	for i := range actions {
+		action := actions[i]
+		next := node.NextBoard(action)
+		if next != nil {
+			result, goal := recursiveDLS(next, limit-1, closed)
+			switch result {
+			case SUCCESS:
+				return result, goal
+			case CUTOFF:
+				cutoff = true
+			}
+		}
+	}
+	(*closed)[node] = false
+	if cutoff {
+		return CUTOFF, nil
+	}
+	return FAILURE, nil
+}
+
+func depthLimitedSearch(start *Board, limit int) (int, *Board) {
+	closed := make(map[*Board]bool)
+	return recursiveDLS(start, limit, &closed)
+}

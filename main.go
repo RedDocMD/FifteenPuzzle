@@ -29,9 +29,13 @@ func main() {
 	fmt.Println("Start position")
 	fmt.Println(*board)
 
-	solved := puzzle.DepthFirstSearch(board)
-	fmt.Println("Solved board")
-	fmt.Println(*solved)
+	solved := puzzle.IterativeDeepeningSearch(board)
+	if solved != nil {
+		fmt.Println("Solved board")
+		solved.PrintPath()
+	} else {
+		fmt.Println("Could not solve in given limit")
+	}
 }
 
 func readIntoFile(tiles [][]int, size int, filename string) {

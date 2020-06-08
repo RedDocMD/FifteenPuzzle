@@ -127,13 +127,18 @@ func actions() []int {
 
 // PrintPath prints the path from the first node to this board
 func (board *Board) PrintPath() {
-	boards := make([]*Board, board.depth+1)
-	for i := 0; board != nil; i++ {
-		boards[i] = board
-		board = board.parent
+	if board == nil {
+		fmt.Println("Cannot print path from nil board")
+	} else {
+		boards := make([]*Board, board.depth+1)
+		for i := 0; board != nil; i++ {
+			boards[i] = board
+			board = board.parent
+		}
+		for i := board.depth; i >= 0; i-- {
+			fmt.Println(boards[i])
+			fmt.Println()
+		}
 	}
-	for i := board.depth; i >= 0; i-- {
-		fmt.Println(boards[i])
-		fmt.Println()
-	}
+
 }
