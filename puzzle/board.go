@@ -49,6 +49,7 @@ func checkTiles(tiles [][]int, size int) bool {
 func (board *Board) NextBoard(action int) *Board {
 	newBoard := new(Board)
 	newBoard.tiles = board.tiles
+	newBoard.size = board.size
 	newBoard.parent = board
 	i, j, _ := board.findZero()
 	switch action {

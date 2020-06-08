@@ -25,7 +25,13 @@ func main() {
 	filename := os.Args[1]
 	readIntoFile(tiles, size, filename)
 	board := puzzle.NewBoard(tiles, size)
+
+	fmt.Println("Start position")
 	fmt.Println(*board)
+
+	solved := puzzle.DepthFirstSearch(board)
+	fmt.Println("Solved board")
+	fmt.Println(*solved)
 }
 
 func readIntoFile(tiles [][]int, size int, filename string) {
