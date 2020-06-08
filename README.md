@@ -15,3 +15,4 @@ The following algorithms will be used to find an optimal solution:
 For the non-optimal algorithms:
 
 1. **Vanilla DFS**:  This just fills up RAM. Even with a modest branching factor of at most 4.
+2. **Iterative-deepening DFS**: This works if the solution is reached within 15 moves. At a depth of 16, 8GB of RAM gets filled up and the system begins to thrash...

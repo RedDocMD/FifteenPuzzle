@@ -1,5 +1,9 @@
 package puzzle
 
+import (
+	"fmt"
+)
+
 // DepthFirstSearch performs vanilla DFS
 func DepthFirstSearch(start *Board) *Board {
 	var open []*Board
@@ -51,8 +55,9 @@ const (
 
 // IterativeDeepeningSearch performs iterative deepening DFS
 func IterativeDeepeningSearch(start *Board) *Board {
-	const maxLimit = 24
+	const maxLimit = 20
 	for limit := 1; limit <= maxLimit; limit++ {
+		fmt.Println("Started on limit", limit)
 		result, goal := depthLimitedSearch(start, limit)
 		if result == SUCCESS {
 			return goal
