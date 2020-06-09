@@ -3,14 +3,30 @@ package main
 import (
 	"RedDocMD/fifteen_puzzle/puzzle"
 	"errors"
+	"flag"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
+	"runtime/pprof"
 	"strconv"
 	"strings"
 )
 
+var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
+var memprofile = flag.String("memprofile", "", "write memory profile to this file")
+var inp = flag.String("inp", "", "Get input from this file")
+
 func main() {
+	flag.Parse()
+	if *cpuprofile != "" {
+		f, err := os.Create(*cpuprofile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
+	}
 	fmt.Println("Fifteen puzzle solver")
 
 	const size int8 = 4
@@ -18,15 +34,22 @@ func main() {
 	for i := range tiles {
 		tiles[i] = make([]int8, size)
 	}
-	if len(os.Args) != 2 {
+	if *inp == "" {
 		fmt.Printf("Usage: %s <filename>", os.Args[0])
 		os.Exit(1)
 	}
-	filename := os.Args[1]
-	readIntoFile(tiles, size, filename)
+	readIntoFile(tiles, size, *inp)
 	board := puzzle.NewBoard(tiles, size)
 
 	solved := puzzle.AStar(board)
+	if *memprofile != "" {
+		f, err := os.Create(*memprofile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		pprof.WriteHeapProfile(f)
+		f.Close()
+	}
 	if solved != nil {
 		fmt.Println("Solved board")
 		solved.PrintPath()

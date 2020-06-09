@@ -1,2 +1,4 @@
 .vscode/
 fifteen_puzzle
+*.mprof
+*.prof
