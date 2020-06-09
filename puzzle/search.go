@@ -151,6 +151,7 @@ func recursiveDAstar(node *Board, fLimit int) (int, int, *Board) {
 	}
 	f := node.Depth() + node.Heuristic()
 	if f > fLimit {
+		// fmt.Println(node.Depth())
 		return CUTOFF, f, nil
 	}
 	cutoff := false

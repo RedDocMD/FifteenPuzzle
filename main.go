@@ -41,7 +41,7 @@ func main() {
 	readIntoFile(tiles, size, *inp)
 	board := puzzle.NewBoard(tiles, size)
 
-	solved := puzzle.AStar(board)
+	solved := puzzle.IterativeDeepeningAStar(board)
 	if *memprofile != "" {
 		f, err := os.Create(*memprofile)
 		if err != nil {

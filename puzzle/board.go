@@ -193,6 +193,25 @@ func abs(x int) int {
 
 // Heuristic returns the Manhattan distance heuristic for the given node
 func (board *Board) Heuristic() int {
+	return board.manhattan()
+}
+
+func (board *Board) weightedManhattan() int {
+	sum := 0
+	weight := int(board.size)
+	for i := 0; i < int(board.size); i++ {
+		for j := 0; j < int(board.size); j++ {
+			val := int(board.tiles[i][j]) + 1
+			ii := val / int(board.size)
+			jj := val % int(board.size)
+			sum += (abs(ii-i) + abs(jj-j)) * weight
+		}
+		weight--
+	}
+	return sum
+}
+
+func (board *Board) manhattan() int {
 	sum := 0
 	for i := 0; i < int(board.size); i++ {
 		for j := 0; j < int(board.size); j++ {
@@ -218,6 +237,5 @@ func (board *Board) Hash() int64 {
 			}
 		}
 	}
-	fmt.Println(hash)
 	return hash
 }
