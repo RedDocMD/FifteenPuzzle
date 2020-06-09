@@ -2,4 +2,7 @@ module RedDocMD/fifteen_puzzle
 
 go 1.14
 
-require github.com/jupp0r/go-priority-queue v0.0.0-20160601094913-ab1073853bde
+require (
+	github.com/emirpasic/gods v1.12.0
+	github.com/jupp0r/go-priority-queue v0.0.0-20160601094913-ab1073853bde
+)

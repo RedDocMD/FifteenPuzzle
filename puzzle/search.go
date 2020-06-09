@@ -9,7 +9,7 @@ import (
 // DepthFirstSearch performs vanilla DFS
 func DepthFirstSearch(start *Board) *Board {
 	var open []*Board
-	closed := make(map[*Board]bool)
+	closed := make(map[int64]bool)
 	open = append(open, start)
 	for len(open) > 0 {
 		n := len(open) - 1
@@ -18,7 +18,7 @@ func DepthFirstSearch(start *Board) *Board {
 		if node.Solved() {
 			return node
 		}
-		if closed[node] {
+		if closed[node.Hash()] {
 			continue
 		}
 		var next *Board
@@ -43,7 +43,7 @@ func DepthFirstSearch(start *Board) *Board {
 			open = append(open, next)
 		}
 
-		closed[node] = true
+		closed[node.Hash()] = true
 	}
 	return nil
 }
@@ -51,7 +51,7 @@ func DepthFirstSearch(start *Board) *Board {
 // AStar performs the A* search algorithm
 func AStar(start *Board) *Board {
 	open := pq.New()
-	closed := make(map[*Board]bool)
+	closed := make(map[int64]bool)
 	open.Insert(start, priority(start))
 
 	for open.Len() > 0 {
@@ -60,18 +60,16 @@ func AStar(start *Board) *Board {
 		if node.Solved() {
 			return node
 		}
-		if closed[node] {
-			continue
-		}
 		actions := actions()
 		for i := range actions {
 			action := actions[i]
 			next := node.NextBoard(action)
-			if next != nil {
+			if next != nil && !closed[next.Hash()] {
 				open.Insert(next, priority(next))
+				closed[next.Hash()] = true
 			}
 		}
-		closed[node] = true
+		node = nil
 	}
 	return nil
 }

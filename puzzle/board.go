@@ -204,3 +204,14 @@ func (board *Board) Heuristic() int {
 	}
 	return sum
 }
+
+// Hash implements a hash function for Board
+func (board *Board) Hash() int64 {
+	hash := int64(0)
+	for i := 0; i < int(board.size); i++ {
+		for j := 0; j < int(board.size); j++ {
+			hash += 16*hash + int64(board.tiles[i][j])
+		}
+	}
+	return hash
+}
