@@ -1,5 +1,9 @@
 package puzzle
 
+import (
+	"fmt"
+)
+
 // DepthFirstSearch performs vanilla DFS
 func DepthFirstSearch(start *Board) *Board {
 	var open []*Board
@@ -51,14 +55,16 @@ const (
 
 // IterativeDeepeningSearch performs iterative deepening DFS
 func IterativeDeepeningSearch(start *Board) *Board {
-	const maxLimit = 20
-	for limit := 1; limit <= maxLimit; limit++ {
+	for limit := 1; ; limit++ {
+		fmt.Println("Current depth limit is", limit)
 		result, goal := recursiveDLS(start, limit)
-		if result == SUCCESS {
+		switch result {
+		case SUCCESS:
 			return goal
+		case FAILURE:
+			return nil
 		}
 	}
-	return nil
 }
 
 func recursiveDLS(node *Board, limit int) (int, *Board) {
@@ -87,4 +93,54 @@ func recursiveDLS(node *Board, limit int) (int, *Board) {
 		return CUTOFF, nil
 	}
 	return FAILURE, nil
+}
+
+// IterativeDeepeningAStar performs IDA* search algorithm
+func IterativeDeepeningAStar(start *Board) *Board {
+	limit := 1
+	for {
+		fmt.Println("Current f cutoff is", limit)
+		result, nextCutoff, goal := recursiveDAstar(start, limit)
+		switch result {
+		case SUCCESS:
+			return goal
+		case FAILURE:
+			return nil
+		case CUTOFF:
+			limit = nextCutoff
+		}
+	}
+}
+
+func recursiveDAstar(node *Board, fLimit int) (int, int, *Board) {
+	if node.Solved() {
+		return SUCCESS, fLimit, node
+	}
+	f := node.Depth() + node.Heuristic()
+	if f > fLimit {
+		return CUTOFF, f, nil
+	}
+	cutoff := false
+	cutoffLimit := int(1e9)
+	actions := actions()
+	for i := range actions {
+		action := actions[i]
+		next := node.NextBoard(action)
+		if next != nil {
+			result, nextCutoff, goal := recursiveDAstar(next, fLimit)
+			switch result {
+			case SUCCESS:
+				return result, fLimit, goal
+			case CUTOFF:
+				cutoff = true
+				if nextCutoff < cutoffLimit {
+					cutoffLimit = nextCutoff
+				}
+			}
+		}
+	}
+	if cutoff {
+		return CUTOFF, cutoffLimit, nil
+	}
+	return FAILURE, fLimit, nil
 }

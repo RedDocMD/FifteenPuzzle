@@ -32,6 +32,11 @@ func NewBoard(tiles [][]int8, size int8) *Board {
 	return &f
 }
 
+// Depth returns the depth of the node (0 for the start node)
+func (board *Board) Depth() int {
+	return int(board.depth)
+}
+
 func checkTiles(tiles [][]int8, size int8) bool {
 	cnt := make(map[int8]int8)
 	var i, j int8
@@ -160,7 +165,7 @@ func (board *Board) PrintPath() {
 	if board == nil {
 		fmt.Println("Cannot print path from nil board")
 	} else {
-		fmt.Println("There are", board.depth, "steps")
+		fmt.Println("There are", board.depth, "transitions")
 		boards := make([]*Board, 0)
 		pt := board
 		boards = append(boards, pt)
@@ -177,4 +182,25 @@ func (board *Board) PrintPath() {
 			fmt.Println()
 		}
 	}
+}
+
+func abs(x int) int {
+	if x >= 0 {
+		return x
+	}
+	return -x
+}
+
+// Heuristic returns the Manhattan distance heuristic for the given node
+func (board *Board) Heuristic() int {
+	sum := 0
+	for i := 0; i < int(board.size); i++ {
+		for j := 0; j < int(board.size); j++ {
+			val := int(board.tiles[i][j]) + 1
+			ii := val / int(board.size)
+			jj := val % int(board.size)
+			sum += abs(ii-i) + abs(jj-j)
+		}
+	}
+	return sum
 }
