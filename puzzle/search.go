@@ -61,6 +61,7 @@ func AStar(start *Board) *Board {
 			return node
 		}
 		actions := actions()
+		// fmt.Println(node.Depth(), node.Heuristic(), priority(node))
 		for i := range actions {
 			action := actions[i]
 			next := node.NextBoard(action)
