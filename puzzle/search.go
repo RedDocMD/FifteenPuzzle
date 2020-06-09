@@ -2,6 +2,8 @@ package puzzle
 
 import (
 	"fmt"
+
+	pq "github.com/jupp0r/go-priority-queue"
 )
 
 // DepthFirstSearch performs vanilla DFS
@@ -44,6 +46,38 @@ func DepthFirstSearch(start *Board) *Board {
 		closed[node] = true
 	}
 	return nil
+}
+
+// AStar performs the A* search algorithm
+func AStar(start *Board) *Board {
+	open := pq.New()
+	closed := make(map[*Board]bool)
+	open.Insert(start, priority(start))
+
+	for open.Len() > 0 {
+		i, _ := open.Pop()
+		node := i.(*Board)
+		if node.Solved() {
+			return node
+		}
+		if closed[node] {
+			continue
+		}
+		actions := actions()
+		for i := range actions {
+			action := actions[i]
+			next := node.NextBoard(action)
+			if next != nil {
+				open.Insert(next, priority(next))
+			}
+		}
+		closed[node] = true
+	}
+	return nil
+}
+
+func priority(board *Board) float64 {
+	return -float64(board.Depth() + board.Heuristic())
 }
 
 // Depth limited DFS return flags
