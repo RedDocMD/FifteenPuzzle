@@ -35,7 +35,7 @@ func main() {
 		tiles[i] = make([]int8, size)
 	}
 	if *inp == "" {
-		fmt.Printf("Usage: %s <filename>", os.Args[0])
+		fmt.Printf("Usage: %s -inp=<filename>", os.Args[0])
 		os.Exit(1)
 	}
 	readIntoFile(tiles, size, *inp)

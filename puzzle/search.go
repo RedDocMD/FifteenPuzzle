@@ -133,7 +133,7 @@ func IterativeDeepeningAStar(start *Board) *Board {
 	limit := 1
 	for {
 		fmt.Println("Current f cutoff is", limit)
-		result, nextCutoff, goal := recursiveDAstar(start, limit)
+		result, nextCutoff, goal := recursiveDAStar(start, limit)
 		switch result {
 		case SUCCESS:
 			return goal
@@ -145,7 +145,7 @@ func IterativeDeepeningAStar(start *Board) *Board {
 	}
 }
 
-func recursiveDAstar(node *Board, fLimit int) (int, int, *Board) {
+func recursiveDAStar(node *Board, fLimit int) (int, int, *Board) {
 	if node.Solved() {
 		return SUCCESS, fLimit, node
 	}
@@ -161,7 +161,7 @@ func recursiveDAstar(node *Board, fLimit int) (int, int, *Board) {
 		action := actions[i]
 		next := node.NextBoard(action)
 		if next != nil {
-			result, nextCutoff, goal := recursiveDAstar(next, fLimit)
+			result, nextCutoff, goal := recursiveDAStar(next, fLimit)
 			switch result {
 			case SUCCESS:
 				return result, fLimit, goal
