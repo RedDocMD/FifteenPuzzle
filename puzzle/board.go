@@ -11,6 +11,7 @@ type Board struct {
 	size        int8
 	transitions []int8
 	depth       int8
+	heuristic   int
 }
 
 // Defines possible actions on this state to generate the next
@@ -28,7 +29,7 @@ func NewBoard(tiles [][]int8, size int8) *Board {
 		return nil
 	}
 	transitions := make([]int8, 0)
-	f := Board{tiles, size, transitions, 0}
+	f := Board{tiles, size, transitions, 0, -1}
 	return &f
 }
 
@@ -193,7 +194,13 @@ func abs(x int) int {
 
 // Heuristic returns the Manhattan distance heuristic for the given node
 func (board *Board) Heuristic() int {
-	return board.maxManhattan()
+	if board.heuristic == -1 {
+		val := board.summedManhattan()
+		board.heuristic = val
+		return val
+	} else {
+		return board.heuristic
+	}
 }
 
 func (board *Board) weightedManhattan() int {
