@@ -132,7 +132,7 @@ func recursiveDLS(node *Board, limit int) (int, *Board) {
 func IterativeDeepeningAStar(start *Board) *Board {
 	limit := start.Heuristic()
 	count := 0
-	for count < 10 {
+	for count < 11 {
 		fmt.Println("Current f cutoff is", limit)
 		result, nextCutoff, goal := recursiveDAStar(start, limit)
 		switch result {

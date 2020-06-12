@@ -196,7 +196,7 @@ func abs(x int) int {
 // Heuristic returns the Manhattan distance heuristic for the given node
 func (board *Board) Heuristic() int {
 	if board.heuristic == -1 {
-		val := board.summedManhattan()
+		val := board.inversionDistance()
 		board.heuristic = val
 		return val
 	} else {
@@ -246,6 +246,57 @@ func (board *Board) maxManhattan() int {
 		}
 	}
 	return max
+}
+
+func (board *Board) inversionDistance() int {
+	unpacked := make([]int, board.size*board.size)
+	idx := 0
+	for i := 0; i < int(board.size); i++ {
+		for j := 0; j < int(board.size); j++ {
+			unpacked[idx] = int(board.tiles[i][j])
+			idx++
+		}
+	}
+
+	inv := 0
+	for i := 0; i < int(board.size*board.size); i++ {
+		if unpacked[i] != 0 {
+			for j := 0; j < i; j++ {
+				if unpacked[i] < unpacked[j] {
+					inv++
+				}
+			}
+		}
+	}
+	vertical := inv/3 + inv%3
+
+	idx = 0
+	for i := 0; i < int(board.size); i++ {
+		for j := 0; j < int(board.size); j++ {
+			unpacked[idx] = j*int(board.size) + i
+			idx++
+		}
+	}
+
+	inv = 0
+	for i := 0; i < int(board.size); i++ {
+		for j := 0; j < int(board.size); j++ {
+			val := int(board.tiles[i][j]) - 1
+			if val != -1 {
+				idx = 0
+				for k := range unpacked {
+					if unpacked[k] == val {
+						idx = k
+						break
+					}
+				}
+				inv += abs(idx - (j*int(board.size) + i))
+			}
+		}
+	}
+	horizontal := inv/3 + inv%3
+
+	return vertical + horizontal
 }
 
 const int64Max = int64(9223372036854775807)
