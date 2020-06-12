@@ -25,9 +25,10 @@ const (
 // NewBoard returns a Board pointer for the given tile config
 // Returns nil if tiles is an invalid board config
 func NewBoard(tiles [][]int8, size int8) *Board {
-	if !checkTiles(tiles, size) {
-		return nil
-	}
+	// if !checkTiles(tiles, size) {
+	// 	return nil
+	// }
+	// Assume user is providing correct input
 	transitions := make([]int8, 0)
 	f := Board{tiles, size, transitions, 0, -1}
 	return &f
