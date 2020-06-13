@@ -65,6 +65,42 @@ func TestIDAStarEasy(t *testing.T) {
 	}
 }
 
+func TestIDAStarDefaultSummedManhattan(t *testing.T) {
+	const size int8 = 4
+	tiles := make([][]int8, size)
+	for i := range tiles {
+		tiles[i] = make([]int8, size)
+	}
+	filename := "default_input"
+	readFromFile(t, tiles, size, filename)
+	board := puzzle.NewBoard(tiles, size, puzzle.SummedManhattan)
+	solved := puzzle.IterativeDeepeningAStar(board, -1)
+	if solved != nil {
+		fmt.Println("Solved board")
+		solved.PrintPath()
+	} else {
+		fmt.Println("Could not solve in given limit")
+	}
+}
+
+func TestIDAStarEasySummedManhattan(t *testing.T) {
+	const size int8 = 4
+	tiles := make([][]int8, size)
+	for i := range tiles {
+		tiles[i] = make([]int8, size)
+	}
+	filename := "easy_input"
+	readFromFile(t, tiles, size, filename)
+	board := puzzle.NewBoard(tiles, size, puzzle.SummedManhattan)
+	solved := puzzle.IterativeDeepeningAStar(board, -1)
+	if solved != nil {
+		fmt.Println("Solved board")
+		solved.PrintPath()
+	} else {
+		fmt.Println("Could not solve in given limit")
+	}
+}
+
 func readFromFile(t testing.TB, tiles [][]int8, size int8, filename string) {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {

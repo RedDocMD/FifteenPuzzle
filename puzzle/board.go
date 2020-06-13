@@ -64,9 +64,6 @@ func (board *Board) NextBoard(action int8) *Board {
 		} else {
 			newBoard.tiles[i][j] = newBoard.tiles[i-1][j]
 			newBoard.tiles[i-1][j] = 0
-			if newBoard.heuristicType == InversionDistance {
-				newBoard.heuristic = board.inversionDistanceFromMove(action, i, j)
-			}
 		}
 	case ShiftDown:
 		if i == board.size-1 {
@@ -74,9 +71,6 @@ func (board *Board) NextBoard(action int8) *Board {
 		} else {
 			newBoard.tiles[i][j] = newBoard.tiles[i+1][j]
 			newBoard.tiles[i+1][j] = 0
-			if newBoard.heuristicType == InversionDistance {
-				newBoard.heuristic = board.inversionDistanceFromMove(action, i, j)
-			}
 		}
 	case ShiftLeft:
 		if j == 0 {
@@ -84,9 +78,6 @@ func (board *Board) NextBoard(action int8) *Board {
 		} else {
 			newBoard.tiles[i][j] = newBoard.tiles[i][j-1]
 			newBoard.tiles[i][j-1] = 0
-			if newBoard.heuristicType == InversionDistance {
-				newBoard.heuristic = board.inversionDistanceFromMove(action, i, j)
-			}
 		}
 	case ShiftRight:
 		if j == board.size-1 {
@@ -94,9 +85,14 @@ func (board *Board) NextBoard(action int8) *Board {
 		} else {
 			newBoard.tiles[i][j] = newBoard.tiles[i][j+1]
 			newBoard.tiles[i][j+1] = 0
-			if newBoard.heuristicType == InversionDistance {
-				newBoard.heuristic = board.inversionDistanceFromMove(action, i, j)
-			}
+		}
+	}
+	if newBoard != nil {
+		switch newBoard.heuristicType {
+		case InversionDistance:
+			newBoard.heuristic = board.inversionDistanceFromMove(action, i, j)
+		case SummedManhattan:
+			newBoard.heuristic = newBoard.summedManhattanFromMove(board.heuristic, action, i, j)
 		}
 	}
 	return newBoard
@@ -215,6 +211,28 @@ func (board *Board) summedManhattan() int {
 		}
 	}
 	return sum
+}
+
+func (board *Board) summedManhattanFromMove(old int, action int8, i int8, j int8) int {
+	// Call only on the NEW board
+	heuristic := old
+	val := int(board.tiles[i][j])
+	ii := val / int(board.size)
+	jj := val % int(board.size)
+	heuristic += abs(ii-int(i)) + abs(jj-int(j))
+
+	switch action {
+	case ShiftDown:
+		heuristic -= abs(ii-int(i+1)) + abs(jj-int(j))
+	case ShiftUp:
+		heuristic -= abs(ii-int(i-1)) + abs(jj-int(j))
+	case ShiftLeft:
+		heuristic -= abs(ii-int(i)) + abs(jj-int(j-1))
+	case ShiftRight:
+		heuristic -= abs(ii-int(i)) + abs(jj-int(j+1))
+	}
+
+	return heuristic
 }
 
 func (board *Board) maxManhattan() int {
