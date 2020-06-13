@@ -20,6 +20,7 @@ const (
 	ShiftRight = iota
 	ShiftDown  = iota
 	ShiftUp    = iota
+	MaxActions = iota
 )
 
 // NewBoard returns a Board pointer for the given tile config
@@ -117,13 +118,6 @@ func (board Board) String() string {
 		str += "\n"
 	}
 	return str
-}
-
-var actionsList []int8 = []int8{ShiftUp, ShiftDown, ShiftLeft, ShiftRight}
-
-//Actions returns the possible of the Game
-func actions() []int8 {
-	return actionsList
 }
 
 // PrintPath prints the path from the first node to this board

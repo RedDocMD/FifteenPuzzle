@@ -60,10 +60,8 @@ func AStar(start *Board) *Board {
 		if node.Solved() {
 			return node
 		}
-		actions := actions()
 		// fmt.Println(node.Depth(), node.Heuristic(), priority(node))
-		for i := range actions {
-			action := actions[i]
+		for action := int8(0); action < MaxActions; action++ {
 			next := node.NextBoard(action)
 			if next != nil && !closed[next.Hash()] {
 				open.Insert(next, priority(next))
@@ -108,9 +106,7 @@ func recursiveDLS(node *Board, limit int) (int, *Board) {
 		return CUTOFF, nil
 	}
 	cutoff := false
-	actions := actions()
-	for i := range actions {
-		action := actions[i]
+	for action := int8(0); action < MaxActions; action++ {
 		next := node.NextBoard(action)
 		if next != nil {
 			result, goal := recursiveDLS(next, limit-1)
@@ -162,9 +158,7 @@ func recursiveDAStar(node *Board, fLimit int) (int, int, *Board) {
 	}
 	cutoff := false
 	cutoffLimit := int(1e9)
-	actions := actions()
-	for i := range actions {
-		action := actions[i]
+	for action := int8(0); action < MaxActions; action++ {
 		next := node.NextBoard(action)
 		if next != nil {
 			result, nextCutoff, goal := recursiveDAStar(next, fLimit)
