@@ -273,34 +273,45 @@ func (board *Board) inversionDistance() int {
 	}
 	vertical := inv/3 + 1
 
-	// idx = 0
-	// for i := 0; i < int(board.size); i++ {
-	// 	for j := 0; j < int(board.size); j++ {
-	// 		unpacked[idx] = j*int(board.size) + i
-	// 		idx++
-	// 	}
-	// }
+	idx = 0
+	for i := 0; i < int(board.size); i++ {
+		for j := 0; j < int(board.size); j++ {
+			unpacked[idx] = j*int(board.size) + i
+			idx++
+		}
+	}
 
-	// inv = 0
-	// for i := 0; i < int(board.size); i++ {
-	// 	for j := 0; j < int(board.size); j++ {
-	// 		val := int(board.tiles[i][j]) - 1
-	// 		if val != -1 {
-	// 			idx = 0
-	// 			for k := range unpacked {
-	// 				if unpacked[k] == val {
-	// 					idx = k
-	// 					break
-	// 				}
-	// 			}
-	// 			inv += abs(idx - (j*int(board.size) + i))
-	// 		}
-	// 	}
-	// }
-	// horizontal := inv/3 + 1
-	horizontal := 0
+	inv = 0
+	for i := 0; i < int(board.size); i++ {
+		for j := 0; j < int(board.size); j++ {
+			val := int(board.tiles[i][j]) - 1
+			if val != -1 {
+				idx = 0
+				for k := range unpacked {
+					if unpacked[k] == val {
+						idx = k
+						break
+					}
+				}
+				inv += abs(idx - (j*int(board.size) + i))
+			}
+		}
+	}
+	horizontal := inv/3 + 1
+	// horizontal := 0
 
 	return vertical + horizontal
+}
+
+var lookup [16]int8 = [16]int8{1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15, 4, 8, 12, 0}
+
+func findInLookup(num int8) int8 {
+	for i := range lookup {
+		if lookup[i] == num {
+			return int8(i)
+		}
+	}
+	return -1
 }
 
 func (board *Board) inversionDistanceFromMove(action int8, i int8, j int8) int {
@@ -347,6 +358,48 @@ func (board *Board) inversionDistanceFromMove(action int8, i int8, j int8) int {
 		}
 		idx--
 		if el < board.tiles[idx/size][idx%size] {
+			count++
+		} else {
+			count--
+		}
+	case ShiftLeft:
+		idx := i + j*size - 3
+		el := board.tiles[i][j-1]
+		elpos := findInLookup(el)
+		if elpos > findInLookup(board.tiles[idx%size][idx/size]) {
+			count++
+		} else {
+			count--
+		}
+		idx++
+		if el > findInLookup(board.tiles[idx%size][idx/size]) {
+			count++
+		} else {
+			count--
+		}
+		idx++
+		if elpos > findInLookup(board.tiles[idx%size][idx/size]) {
+			count++
+		} else {
+			count--
+		}
+	case ShiftRight:
+		idx := i + j*size + 3
+		el := board.tiles[i][j+1]
+		elpos := findInLookup(el)
+		if elpos < findInLookup(board.tiles[idx%size][idx/size]) {
+			count++
+		} else {
+			count--
+		}
+		idx--
+		if el < findInLookup(board.tiles[idx%size][idx/size]) {
+			count++
+		} else {
+			count--
+		}
+		idx--
+		if elpos < findInLookup(board.tiles[idx%size][idx/size]) {
 			count++
 		} else {
 			count--
