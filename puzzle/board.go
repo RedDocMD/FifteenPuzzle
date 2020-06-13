@@ -58,33 +58,45 @@ func (board *Board) NextBoard(action int8) *Board {
 
 	i, j, _ := board.findZero()
 	switch action {
-	case ShiftLeft:
+	case ShiftUp:
 		if i == 0 {
 			newBoard = nil
 		} else {
 			newBoard.tiles[i][j] = newBoard.tiles[i-1][j]
 			newBoard.tiles[i-1][j] = 0
+			if newBoard.heuristicType == InversionDistance {
+				newBoard.heuristic = board.inversionDistanceFromMove(action, i, j)
+			}
 		}
-	case ShiftRight:
+	case ShiftDown:
 		if i == board.size-1 {
 			newBoard = nil
 		} else {
 			newBoard.tiles[i][j] = newBoard.tiles[i+1][j]
 			newBoard.tiles[i+1][j] = 0
+			if newBoard.heuristicType == InversionDistance {
+				newBoard.heuristic = board.inversionDistanceFromMove(action, i, j)
+			}
 		}
-	case ShiftUp:
+	case ShiftLeft:
 		if j == 0 {
 			newBoard = nil
 		} else {
 			newBoard.tiles[i][j] = newBoard.tiles[i][j-1]
 			newBoard.tiles[i][j-1] = 0
+			if newBoard.heuristicType == InversionDistance {
+				newBoard.heuristic = board.inversionDistanceFromMove(action, i, j)
+			}
 		}
-	case ShiftDown:
+	case ShiftRight:
 		if j == board.size-1 {
 			newBoard = nil
 		} else {
 			newBoard.tiles[i][j] = newBoard.tiles[i][j+1]
 			newBoard.tiles[i][j+1] = 0
+			if newBoard.heuristicType == InversionDistance {
+				newBoard.heuristic = board.inversionDistanceFromMove(action, i, j)
+			}
 		}
 	}
 	return newBoard
@@ -241,35 +253,93 @@ func (board *Board) inversionDistance() int {
 			}
 		}
 	}
-	vertical := inv/3 + inv%3
+	vertical := inv/3 + 1
 
-	idx = 0
-	for i := 0; i < int(board.size); i++ {
-		for j := 0; j < int(board.size); j++ {
-			unpacked[idx] = j*int(board.size) + i
-			idx++
-		}
-	}
+	// idx = 0
+	// for i := 0; i < int(board.size); i++ {
+	// 	for j := 0; j < int(board.size); j++ {
+	// 		unpacked[idx] = j*int(board.size) + i
+	// 		idx++
+	// 	}
+	// }
 
-	inv = 0
-	for i := 0; i < int(board.size); i++ {
-		for j := 0; j < int(board.size); j++ {
-			val := int(board.tiles[i][j]) - 1
-			if val != -1 {
-				idx = 0
-				for k := range unpacked {
-					if unpacked[k] == val {
-						idx = k
-						break
-					}
-				}
-				inv += abs(idx - (j*int(board.size) + i))
-			}
-		}
-	}
-	horizontal := inv/3 + inv%3
+	// inv = 0
+	// for i := 0; i < int(board.size); i++ {
+	// 	for j := 0; j < int(board.size); j++ {
+	// 		val := int(board.tiles[i][j]) - 1
+	// 		if val != -1 {
+	// 			idx = 0
+	// 			for k := range unpacked {
+	// 				if unpacked[k] == val {
+	// 					idx = k
+	// 					break
+	// 				}
+	// 			}
+	// 			inv += abs(idx - (j*int(board.size) + i))
+	// 		}
+	// 	}
+	// }
+	// horizontal := inv/3 + 1
+	horizontal := 0
 
 	return vertical + horizontal
+}
+
+func (board *Board) inversionDistanceFromMove(action int8, i int8, j int8) int {
+	heuristic := board.heuristic
+	size := board.size
+	count := 0
+	if heuristic == -1 {
+		panic(errors.New("Call board.Heuristic() at least once"))
+	}
+	switch action {
+	case ShiftUp:
+		idx := i*size + j - 3
+		el := board.tiles[i-1][j]
+		if el > board.tiles[idx/size][idx%size] {
+			count++
+		} else {
+			count--
+		}
+		idx++
+		if el > board.tiles[idx/size][idx%size] {
+			count++
+		} else {
+			count--
+		}
+		idx++
+		if el > board.tiles[idx/size][idx%size] {
+			count++
+		} else {
+			count--
+		}
+	case ShiftDown:
+		idx := i*size + j + 3
+		el := board.tiles[i+1][j]
+		if el < board.tiles[idx/size][idx%size] {
+			count++
+		} else {
+			count--
+		}
+		idx--
+		if el < board.tiles[idx/size][idx%size] {
+			count++
+		} else {
+			count--
+		}
+		idx--
+		if el < board.tiles[idx/size][idx%size] {
+			count++
+		} else {
+			count--
+		}
+	}
+	if count < 0 {
+		heuristic += abs(count)/3 + 1
+	} else {
+		heuristic -= abs(count) / 3
+	}
+	return heuristic
 }
 
 const int64Max = int64(9223372036854775807)
