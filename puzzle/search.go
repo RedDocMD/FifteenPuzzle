@@ -129,10 +129,13 @@ func recursiveDLS(node *Board, limit int) (int, *Board) {
 }
 
 // IterativeDeepeningAStar performs IDA* search algorithm
-func IterativeDeepeningAStar(start *Board) *Board {
+func IterativeDeepeningAStar(start *Board, iterations int) *Board {
 	limit := start.Heuristic()
+	if iterations < 0 {
+		iterations = int(1e9)
+	}
 	count := 0
-	for count < 11 {
+	for count < iterations {
 		fmt.Println("Current f cutoff is", limit)
 		result, nextCutoff, goal := recursiveDAStar(start, limit)
 		switch result {

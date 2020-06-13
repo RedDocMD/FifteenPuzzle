@@ -2,3 +2,4 @@
 fifteen_puzzle
 *.mprof
 *.prof
+*.test

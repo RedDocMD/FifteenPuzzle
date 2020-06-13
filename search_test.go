@@ -5,27 +5,22 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"os"
 	"strconv"
 	"strings"
+	"testing"
 )
 
-func main() {
-	fmt.Println("Fifteen puzzle solver")
-
+func BenchmarkIDAStar(t *testing.B) {
+	t.ReportAllocs()
 	const size int8 = 4
 	tiles := make([][]int8, size)
 	for i := range tiles {
 		tiles[i] = make([]int8, size)
 	}
-	if len(os.Args) != 2 {
-		fmt.Printf("Usage: %s <filename>", os.Args[0])
-		os.Exit(1)
-	}
-	readIntoFile(tiles, size, os.Args[1])
+	filename := "default_input"
+	readFromFile(t, tiles, size, filename)
 	board := puzzle.NewBoard(tiles, size)
-
-	solved := puzzle.IterativeDeepeningAStar(board, -1)
+	solved := puzzle.IterativeDeepeningAStar(board, 12)
 	if solved != nil {
 		fmt.Println("Solved board")
 		solved.PrintPath()
@@ -34,25 +29,25 @@ func main() {
 	}
 }
 
-func readIntoFile(tiles [][]int8, size int8, filename string) {
+func readFromFile(t testing.TB, tiles [][]int8, size int8, filename string) {
 	data, err := ioutil.ReadFile(filename)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
 	dataString := string(data)
 	lines := strings.Split(dataString, "\n")
 	if int8(len(lines)) != size {
-		panic(errors.New("Invalid input file: incompatible sizes"))
+		t.Fatal(errors.New("Invalid input file: incompatible sizes"))
 	}
 	for i := range lines {
 		numbers := strings.Split(lines[i], " ")
 		if int8(len(numbers)) != size {
-			panic(errors.New("Invalid input file: incompatible sizes"))
+			t.Fatal(errors.New("Invalid input file: incompatible sizes"))
 		}
 		for j := range numbers {
 			number, err := strconv.Atoi(numbers[j])
 			if err != nil {
-				panic(err)
+				t.Fatal(err)
 			}
 			tiles[i][j] = int8(number)
 		}
