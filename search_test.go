@@ -19,7 +19,7 @@ func BenchmarkIDAStar(t *testing.B) {
 	}
 	filename := "default_input"
 	readFromFile(t, tiles, size, filename)
-	board := puzzle.NewBoard(tiles, size)
+	board := puzzle.NewBoard(tiles, size, puzzle.InversionDistance)
 	solved := puzzle.IterativeDeepeningAStar(board, 12)
 	if solved != nil {
 		fmt.Println("Solved board")

@@ -23,7 +23,7 @@ func main() {
 		os.Exit(1)
 	}
 	readIntoFile(tiles, size, os.Args[1])
-	board := puzzle.NewBoard(tiles, size)
+	board := puzzle.NewBoard(tiles, size, puzzle.InversionDistance)
 
 	solved := puzzle.IterativeDeepeningAStar(board, -1)
 	if solved != nil {

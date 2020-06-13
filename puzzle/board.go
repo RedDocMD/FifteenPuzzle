@@ -7,11 +7,12 @@ import (
 
 // Board represents the n puzzle board at any given time
 type Board struct {
-	tiles     [][]int8
-	size      int8
-	parent    *Board
-	depth     int8
-	heuristic int
+	tiles         [][]int8
+	size          int8
+	parent        *Board
+	depth         int8
+	heuristic     int
+	heuristicType int8
 }
 
 // Defines possible actions on this state to generate the next
@@ -20,13 +21,22 @@ const (
 	ShiftRight = iota
 	ShiftDown  = iota
 	ShiftUp    = iota
-	MaxActions = iota
+	MaxActions = iota // Must be last element
+)
+
+// Defines the possible heuristic types
+const (
+	WeightedManhattan = iota
+	SummedManhattan   = iota
+	MaxManahttan      = iota
+	InversionDistance = iota
+	MaxHeuristicTypes = iota // Must be last element
 )
 
 // NewBoard returns a Board pointer for the given tile config
 // Returns nil if tiles is an invalid board config
-func NewBoard(tiles [][]int8, size int8) *Board {
-	f := Board{tiles, size, nil, 0, -1}
+func NewBoard(tiles [][]int8, size int8, heuristicType int8) *Board {
+	f := Board{tiles, size, nil, 0, -1, heuristicType}
 	return &f
 }
 
@@ -42,7 +52,7 @@ func (board *Board) NextBoard(action int8) *Board {
 		newTiles[i] = make([]int8, board.size)
 		copy(newTiles[i], board.tiles[i])
 	}
-	newBoard := NewBoard(newTiles, board.size)
+	newBoard := NewBoard(newTiles, board.size, board.heuristicType)
 	newBoard.parent = board
 	newBoard.depth = board.depth + 1
 
@@ -149,7 +159,17 @@ func abs(x int) int {
 // Heuristic returns the Manhattan distance heuristic for the given node
 func (board *Board) Heuristic() int {
 	if board.heuristic == -1 {
-		val := board.inversionDistance()
+		var val int
+		switch board.heuristicType {
+		case WeightedManhattan:
+			val = board.weightedManhattan()
+		case SummedManhattan:
+			val = board.summedManhattan()
+		case MaxManahttan:
+			val = board.maxManhattan()
+		case InversionDistance:
+			val = board.inversionDistance()
+		}
 		board.heuristic = val
 		return val
 	} else {
