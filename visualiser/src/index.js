@@ -9,22 +9,29 @@ class Board extends React.Component {
 }
 
 class Tile extends React.Component {
-    constructor() {
-
+    constructor(props) {
+        super(props);
     }
 
     render() {
-
+        return (
+            <span class="tile">
+                <span class="padding"></span>
+                <span class="text">{this.props.value}</span>
+                <span class="padding"></span>
+            </span>
+        )
     }
 }
 
-class App {
-    constructor() {
-
-    }
-
+class App extends React.Component {
     render() {
-
+        return (
+            <div>
+                <Tile value="1"/>
+                <Tile value="2"/>
+            </div>
+        )
     }
 }
 

@@ -1,3 +1,14 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+.tile {
+    width: 60px;
+    height: 60px;
+    background-color: #fcdc9a;
+    border-width: 2px;
+    border-style: solid;
+    align-items: center;
+    margin: 1px;
+    display: inline-flex;
+}
+
+.tile.padding {
+    flex: 1;
+}
