@@ -65,6 +65,60 @@ func TestIDAStarEasy(t *testing.T) {
 	}
 }
 
+func TestIDAStarThird(t *testing.T) {
+	const size int8 = 4
+	tiles := make([][]int8, size)
+	for i := range tiles {
+		tiles[i] = make([]int8, size)
+	}
+	filename := "third_input"
+	readFromFile(t, tiles, size, filename)
+	board := puzzle.NewBoard(tiles, size, puzzle.InversionDistance)
+	solved := puzzle.IterativeDeepeningAStar(board, -1)
+	if solved != nil {
+		fmt.Println("Solved board")
+		solved.PrintPath()
+	} else {
+		fmt.Println("Could not solve in given limit")
+	}
+}
+
+func TestIDAStarFourth(t *testing.T) {
+	const size int8 = 4
+	tiles := make([][]int8, size)
+	for i := range tiles {
+		tiles[i] = make([]int8, size)
+	}
+	filename := "fourth_input"
+	readFromFile(t, tiles, size, filename)
+	board := puzzle.NewBoard(tiles, size, puzzle.InversionDistance)
+	solved := puzzle.IterativeDeepeningAStar(board, -1)
+	if solved != nil {
+		fmt.Println("Solved board")
+		solved.PrintPath()
+	} else {
+		fmt.Println("Could not solve in given limit")
+	}
+}
+
+func TestIDAStarFifth(t *testing.T) {
+	const size int8 = 4
+	tiles := make([][]int8, size)
+	for i := range tiles {
+		tiles[i] = make([]int8, size)
+	}
+	filename := "fifth_input"
+	readFromFile(t, tiles, size, filename)
+	board := puzzle.NewBoard(tiles, size, puzzle.InversionDistance)
+	solved := puzzle.IterativeDeepeningAStar(board, -1)
+	if solved != nil {
+		fmt.Println("Solved board")
+		solved.PrintPath()
+	} else {
+		fmt.Println("Could not solve in given limit")
+	}
+}
+
 func TestIDAStarDefaultSummedManhattan(t *testing.T) {
 	const size int8 = 4
 	tiles := make([][]int8, size)
