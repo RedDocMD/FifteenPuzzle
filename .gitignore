@@ -3,3 +3,5 @@ fifteen_puzzle
 *.mprof
 *.prof
 *.test
+visualiser/node_modules/**
+node_modules/**
