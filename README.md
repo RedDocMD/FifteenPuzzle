@@ -53,5 +53,15 @@ The performance of *Combined Manhattan* is not fully reflected in the above numb
 
 ## Problems
 
-Even with the best heuristic (Inversion distance) and IDA*, not all legal initial positions are being solved. The harder initial states seem to take forever to solve.
+Even with the best heuristic (Inversion distance) and IDA\*, not all legal initial positions are being solved. The harder initial states seem to take forever to solve.
 
+To this end, the program was let to run for 2 hours on the input from file **second_input** and a CPU profile was run using the `pprof` tool built into the Go test system. The call graph was saved in *graph_Inversion_Second_2h.pdf*. A screenshot of the most significant part of the graph is as follows:
+
+![Call graph](cpuprof.png)
+
+While 85.79% of the total time was spent running IDA\* (the rest is consumed by the profiling framework), 45.21% time was spent behind `mallocgc`, ie, 52.7% of the time running IDA* was spent by `mallocgc`.
+`mallocgc` is Go's implementation of the C `malloc` function, and performs roughly the same tasks as it does. So evidently, if a large number of nodes have to be generated and examined by the IDA\*, memory allocation becomes the bottleneck.
+
+## Improvements
+
+The only way around generating lot of nodes is being able to prune them off early. For that, a better heuristic is required which will provide a tighter lower bound. There is a heuristic in literature called the *Walking distance* heuristic, coined by Ken'ichiro Takahashi. It is supposed to perform better than the Inversion distance heuristic. Also, *pattern databases* can be used to generate better bounds.

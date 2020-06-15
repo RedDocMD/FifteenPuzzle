@@ -38,6 +38,10 @@ func TestIDAStarDefault(t *testing.T) {
 	idaStarTester(t, "default_input", puzzle.InversionDistance, "Inversion Distance")
 }
 
+func TestIDAStarSecond(t *testing.T) {
+	idaStarTester(t, "default_input", puzzle.InversionDistance, "Inversion Distance")
+}
+
 func TestIDAStarEasy(t *testing.T) {
 	idaStarTester(t, "easy_input", puzzle.InversionDistance, "Inversion Distance")
 }
