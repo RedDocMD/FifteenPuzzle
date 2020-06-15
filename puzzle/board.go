@@ -30,6 +30,7 @@ const (
 	SummedManhattan   = iota
 	MaxManahttan      = iota
 	InversionDistance = iota
+	CombinedManhattan = iota
 	MaxHeuristicTypes = iota // Must be last element
 )
 
@@ -177,6 +178,8 @@ func (board *Board) Heuristic() int {
 			val = board.maxManhattan()
 		case InversionDistance:
 			val = board.inversionDistance()
+		case CombinedManhattan:
+			val = board.combinedManhattan()
 		}
 		board.heuristic = val
 		return val
@@ -233,6 +236,47 @@ func (board *Board) summedManhattanFromMove(old int, action int8, i int8, j int8
 	}
 
 	return heuristic
+}
+
+func (board *Board) linearConflict() int {
+	lc := 0
+	for i := 0; i < int(board.size); i++ {
+		for j := 0; j < int(board.size)-1; j++ {
+			val1 := int(board.tiles[i][j]) + 1
+			val2 := int(board.tiles[i][j+1]) + 1
+			if1 := val1 / int(board.size)
+			if2 := val2 / int(board.size)
+			jf1 := val1 % int(board.size)
+			jf2 := val2 % int(board.size)
+			if if1 == if2 {
+				if jf1-jf2 == 1 {
+					lc++
+				}
+			}
+		}
+	}
+	for j := 0; j < int(board.size); j++ {
+		for i := 0; i < int(board.size)-1; i++ {
+			val1 := int(board.tiles[i][j]) + 1
+			val2 := int(board.tiles[i+1][j]) + 1
+			if1 := val1 / int(board.size)
+			if2 := val2 / int(board.size)
+			jf1 := val1 % int(board.size)
+			jf2 := val2 % int(board.size)
+			if jf1 == jf2 {
+				if if1-if2 == 1 {
+					lc++
+				}
+			}
+		}
+	}
+	return 2 * lc
+}
+
+func (board *Board) combinedManhattan() int {
+	manhattan := board.summedManhattan()
+	linearConflict := board.linearConflict()
+	return manhattan + linearConflict
 }
 
 func (board *Board) maxManhattan() int {
