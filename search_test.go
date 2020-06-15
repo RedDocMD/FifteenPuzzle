@@ -62,15 +62,19 @@ func TestIDAStarEasySummedManhattan(t *testing.T) {
 	idaStarTester(t, "easy_input", puzzle.SummedManhattan, "Summed Manhattan")
 }
 
-func TestIDAStarEasyCombineddManhattan(t *testing.T) {
+func TestIDAStarThirdSummedManhattan(t *testing.T) {
+	idaStarTester(t, "third_input", puzzle.SummedManhattan, "Summed Manhattan")
+}
+
+func TestIDAStarEasyCombinedManhattan(t *testing.T) {
 	idaStarTester(t, "easy_input", puzzle.CombinedManhattan, "Combined Manhattan")
 }
 
-func TestIDAStarThirdCombineddManhattan(t *testing.T) {
+func TestIDAStarThirdCombinedManhattan(t *testing.T) {
 	idaStarTester(t, "third_input", puzzle.CombinedManhattan, "Combined Manhattan")
 }
 
-func TestIDAStarFourthCombineddManhattan(t *testing.T) {
+func TestIDAStarFourthCombinedManhattan(t *testing.T) {
 	idaStarTester(t, "fourth_input", puzzle.CombinedManhattan, "Combined Manhattan")
 }
 
